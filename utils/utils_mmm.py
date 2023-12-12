@@ -55,6 +55,8 @@ def preprocess_leads_policies_data(file_path, min_week, max_week):
             - premiums_df (pd.DataFrame): Subset of sales premiums data for MMM.
             - leads_df (pd.DataFrame): Aggregated leads data by week.
     """
+
+    print('in here again')
     # Load leads and policy data
     leads_df = pd.read_csv(file_path)
 
@@ -88,8 +90,8 @@ def preprocess_leads_policies_data(file_path, min_week, max_week):
 
     # Calculate premium monthly, annual and ltv
     sales_df['week_of'] = sales_df.week_of_request
-    sales_df['premium_monthly'] = sales_df.b2c_slms_ap
-    sales_df['premium_annual'] = sales_df.b2c_slms_ap * 12
+    sales_df['premium_monthly'] = sales_df.b2c_slms_ap * 1.5
+    sales_df['premium_annual'] = sales_df.premium_monthly * 12
     sales_df['premium_ltv'] = sales_df.premium_annual * 4
 
     # Superset of sales data for BI
