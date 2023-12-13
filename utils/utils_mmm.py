@@ -4,6 +4,9 @@ import re
 import pandas as pd
 import numpy as np
 import holidays
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.ticker as mticker
 
 def preprocess_media_data(file_path):
     """
@@ -55,8 +58,6 @@ def preprocess_leads_policies_data(file_path, min_week, max_week):
             - premiums_df (pd.DataFrame): Subset of sales premiums data for MMM.
             - leads_df (pd.DataFrame): Aggregated leads data by week.
     """
-
-    print('in here again')
     # Load leads and policy data
     leads_df = pd.read_csv(file_path)
 
@@ -208,3 +209,240 @@ def get_holidays(media_mmm_df):
     holidays_mmm_df = standardize_column_names(holidays_mmm_df)
     
     return holidays_bi_df, holidays_mmm_df
+
+
+def plot_media_and_premiums_YoY(media_bi_df, premiums_mmm_df):
+    """
+    Plots the media cost and annual premiums by year in a side-by-side bar chart.
+
+    Parameters:
+    media_bi_df (DataFrame): DataFrame containing media cost data with 'week_of' and 'media_cost' columns.
+    premiums_mmm_df (DataFrame): DataFrame containing annual premiums data with 'week_of' and 'premium_annual' columns.
+
+    Returns:
+    None
+    """
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+
+    # Rest of the code...
+def plot_media_and_premiums_YoY(media_bi_df, premiums_mmm_df):
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+
+    df = media_bi_df
+    df['year'] = df['week_of'].dt.year
+
+    grouped_media_data = df.groupby(['year'])['media_cost'].sum().reset_index()
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='media_cost', data=grouped_media_data, palette='bright', ax=axs[0])
+
+    # Add labels to each bar
+    for p in axs[0].patches:
+        axs[0].annotate(f'{p.get_height()/1000000:.1f}M', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[0].set_xlabel('Year')
+    axs[0].set_ylabel('Media Cost (Millions)')  # Modify the Y axis label
+    axs[0].set_title('Media Cost by Year Total')
+
+    # Format the Y axis labels to display in millions
+    formatter = mticker.FuncFormatter(lambda x, pos: f'{x/1000000:.0f}M')
+    axs[0].yaxis.set_major_formatter(formatter)
+
+    df = premiums_mmm_df
+    df['year'] = df['week_of'].dt.year
+
+    ########### Premium Data YoY ##############
+    grouped_premium_data = df.groupby(['year'])['premium_annual'].sum().reset_index()
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='premium_annual', data=grouped_premium_data, palette='bright', ax=axs[1])
+
+    # Add labels to each bar
+    for p in axs[1].patches:
+        axs[1].annotate(f'{p.get_height()/1000000:.1f}M', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[1].set_xlabel('Year')
+    axs[1].set_ylabel('Annual Premiums (Millions)')  # Modify the Y axis label
+    axs[1].set_title('Annual Premiums by Year Total')
+
+    # Format the Y axis labels to display in millions
+    formatter = mticker.FuncFormatter(lambda x, pos: f'{x/1000000:.0f}M')
+    axs[1].yaxis.set_major_formatter(formatter)
+
+    # Show the plot
+    plt.show()
+
+
+def plot_leads_and_policies_YoY(leads_mmm_df, policies_mmm_df):
+    """
+    Plots the total leads and policies by year using bar charts.
+
+    Parameters:
+    leads_mmm_df (DataFrame): DataFrame containing leads data.
+    policies_mmm_df (DataFrame): DataFrame containing policies data.
+
+    Returns:
+    None
+    """
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+
+    ########### Leads YoY ##############
+
+    df = leads_mmm_df
+    df['year'] = df['week_of'].dt.year
+
+    grouped_conv_data = df.groupby(['year'])['leads'].sum().reset_index()
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='leads', data=grouped_conv_data, palette='bright', ax=axs[0])
+
+    # Add labels to each bar
+    for p in axs[0].patches:
+        axs[0].annotate(f'{p.get_height():,.0f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[0].set_xlabel('Year')
+    axs[0].set_ylabel('Leads')  # Modify the Y axis label
+    axs[0].set_title('Total Leads by Year')
+
+    ########### Policies YoY ##############
+
+    df = policies_mmm_df
+    df['year'] = df['week_of'].dt.year
+
+    grouped_conv_data = df.groupby(['year'])['policies'].sum().reset_index()
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='policies', data=grouped_conv_data, palette='bright', ax=axs[1])
+
+    # Add labels to each bar
+    for p in axs[1].patches:
+        axs[1].annotate(f'{p.get_height():,.0f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[1].set_xlabel('Year')
+    axs[1].set_ylabel('Policies')  # Modify the Y axis label
+    axs[1].set_title('Total Policies by Year')
+
+    plt.show()
+
+def plot_conv_rate_and_roas_YoY(conv_rate_mmm_df, premiums_mmm_df, media_bi_df):
+    """
+    Plots the average conversion rate and ROAS (Return on Advertising Spend) by year.
+
+    Parameters:
+    conv_rate_mmm_df (DataFrame): DataFrame containing conversion rate data.
+    premiums_mmm_df (DataFrame): DataFrame containing premium data.
+    media_bi_df (DataFrame): DataFrame containing media cost data.
+
+    Returns:
+    None
+    """
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+
+    ########### Conversion Rate Data YoY ##############
+    df = conv_rate_mmm_df
+    df['year'] = df['week_of'].dt.year
+
+    grouped_conv_data = df.groupby(['year'])['conv_rate'].mean().reset_index()
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='conv_rate', data=grouped_conv_data, palette='bright', ax=axs[0])
+
+    # Add labels to each bar
+    for p in axs[0].patches:
+        axs[0].annotate(f'{p.get_height():.2f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[0].set_xlabel('Year')
+    axs[0].set_ylabel('Avg. Conversion Rate')  # Modify the Y axis label
+    axs[0].set_title('Average Conversion Rate by Year')
+
+    df = premiums_mmm_df
+    df['year'] = df['week_of'].dt.year
+    grouped_premium_data = df.groupby(['year'])['premium_annual'].sum().reset_index()
+
+    ########### ROAS Data YoY ##############
+
+    df = media_bi_df
+    df['year'] = df['week_of'].dt.year
+    grouped_media_data = df.groupby(['year'])['media_cost'].sum().reset_index()
+    roas_df = grouped_premium_data.merge(grouped_media_data, on='year')
+
+    # Calculate ROAS
+    roas = roas_df['premium_annual'] / roas_df['media_cost']
+
+    # Add ROAS to the dataframes
+    roas_df['ROAS'] = roas
+
+    sns.barplot(x='year', y='ROAS', data=roas_df, palette='bright', ax=axs[1])
+
+    # Add labels to each bar
+    for p in axs[1].patches:
+        axs[1].annotate(f'{p.get_height():.2f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[1].set_xlabel('Year')
+    axs[1].set_ylabel('ROAS')  # Modify the Y axis label
+    axs[1].set_title('ROAS by Year')
+
+    # Show the plot
+    plt.show()
+
+def plot_media_spend_by_channel_YoY(media_bi_df):
+    """
+    Plots the media spend by channel and the percentage of media spend by channel over the years.
+
+    Parameters:
+    media_bi_df (DataFrame): The input DataFrame containing media spend data.
+
+    Returns:
+    None
+    """
+    ##### Media Spend by Channel #####
+    # Create a 2x2 grid of subplots
+    fig, axs = plt.subplots(1, 2, figsize=(15, 5))
+
+    df = media_bi_df
+    grouped_channel_data = df.groupby(['year', 'channel'])['media_cost'].sum().reset_index()
+
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='media_cost', hue='channel', data=grouped_channel_data, palette='bright', ax=axs[0])
+
+    # Add labels to each bar
+    for p in axs[0].patches:
+        axs[0].annotate(f'{p.get_height()/1000000:.1f}M', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[0].set_xlabel('Year')
+    axs[0].set_ylabel('Media Cost (Millions)')  # Modify the Y axis label
+    axs[0].set_title('Media Cost by Year and Channel')
+
+    # Format the Y axis labels to display in millions
+    formatter = mticker.FuncFormatter(lambda x, pos: f'{x/1000000:.0f}M')
+    ax=axs[0].yaxis.set_major_formatter(formatter)
+
+
+    ##### Percentage of Media Spend by Channel #####
+    # Calculate the total media cost for each year
+    total_media_cost = grouped_channel_data.groupby('year')['media_cost'].transform('sum')
+
+    # Calculate the percentage of media cost for each channel in each year
+    grouped_channel_data['percentage'] = grouped_channel_data['media_cost'] / total_media_cost * 100
+
+    # Create a bar chart with side-by-side bars, stacked by channel
+    sns.barplot(x='year', y='percentage', hue='channel', data=grouped_channel_data, palette='bright', ax=axs[1])
+
+    # Add labels to each bar
+    for p in axs[1].patches:
+        axs[1].annotate(f'{p.get_height():.1f}%', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')
+
+    # Add labels and title
+    axs[1].set_xlabel('Year')
+    axs[1].set_ylabel('Media Cost (%)')  # Modify the Y axis label
+    axs[1].set_title('% Media Cost by Year and Channel')
+
+    # Show the plot
+    plt.show()
+
