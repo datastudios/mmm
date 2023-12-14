@@ -1,5 +1,7 @@
 # Introduction
 
+## Industry | B2C Healthcare Insurance
+
 The B2C (business-to-consumer) healthcare insurance industry encompasses companies offering individual and family health insurance plans directly to consumers. These plans provide coverage for medical expenses incurred for various health services and treatments. Key features of the B2C healthcare insurance industry include:
 
 * Focus on individual and family plans: Unlike B2B (business-to-business) insurance, which caters to employer-sponsored plans, B2C primarily focuses on individual and family policies purchased directly by consumers.
@@ -18,7 +20,7 @@ The design and adoption of a "test-and-learn" framework that focused on incremen
 
 The following case study provides a technical summary for the development of the marketing mix model along with some of the next-step recommendations coming out of that exercise.
 
-## Introduction | Marketing Mix Model (MMM)
+## Analysis Technique | Marketing Mix Model (MMM)
 
 **Marketing Mix Model (MMM)**<br>
 Marketing Mix Modeling (MMM) is a data-driven approach that helps businesses understand how different marketing activities and channels contribute to their key goals, such as sales, conversions, or brand awareness. Overall, MMM is a powerful tool that can help businesses maximize the return on their marketing investment by providing data-driven insights and optimizing their marketing efforts.
